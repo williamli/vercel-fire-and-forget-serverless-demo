@@ -1,53 +1,56 @@
+import { useState } from 'react';
+
 import Head from 'next/head'
+import axios from 'axios'
+
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+
+  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const sendMessage = () => {
+    console.log('calling /api/message-slack...', {message})
+    setLoading(true)
+    axios.post('/api/message-slack', {
+      message
+    }).then(function (res) {
+      console.log('server response', res.data)
+      setLoading(false)
+    })
+    .catch(function (error) {
+      console.log(error)
+      setLoading(false)
+    })
+  }
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Fire and Forget Demo</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          Send a message to Slack channel:{' '}
+          <code className={styles.code}><a href="https://vercel.slack.com/archives/C3UU3UG12" target="_blank">#testing</a></code>
+          { loading === false ?
+              <>
+                <textarea className={styles.textarea} value={message} onChange={(e)=>{setMessage(e.target.value)}}></textarea>
+                <div className={styles.buttonContainer}>
+                  <button onClick={()=>setMessage("")} disabled={message === ""}>Clear</button>
+                  <button onClick={()=>sendMessage()} disabled={message === ""}>Send</button>
+                </div>
+              </>
+            : <div className={styles.loading}>Loading...</div>
+          }
+          
         </p>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        
       </main>
 
       <footer className={styles.footer}>
