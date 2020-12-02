@@ -3,7 +3,7 @@ const token = process.env.slacklogger_token
 const bot = new Slack({token})
 const channel = 'testing';
 
-const delay = 10000
+const delay = 4000
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
